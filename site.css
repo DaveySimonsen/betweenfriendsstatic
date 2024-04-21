@@ -1,0 +1,49 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.page-content {
+    background-color: #f8f9fa; /* Light gray background */
+    color: #343a40; /* Dark gray text color */
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    padding: 2em;
+}
+
+.privacy-title {
+    color: #007bff; /* Blue color for the privacy policy title */
+    margin-top: 50px; /* Top margin for the title */
+}
+
+.privacy-content {
+    margin-top: 30px; /* Top margin for the content */
+    margin-bottom: 100px; /* Bottom margin to prevent overlapping with the footer */
+}
+
+.privacy-section {
+    margin-top: 20px; /* Top margin for each section */
+}
+
+.podcastOptionHeading {
+    font-family: "Honk";
+}
+
+
