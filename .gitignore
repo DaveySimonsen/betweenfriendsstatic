@@ -1,0 +1,37 @@
+# Visual Studio specific files
+.vs/
+
+# Ignore Visual Studio generated files
+*/obj/
+*/bin/
+
+# Ignore MonoDevelop generated files
+*.userprefs
+*.usertasks
+*.pidb
+
+# Ignore Rider generated files
+.idea/
+
+# Ignore generated build files
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+*.vspscc
+*.vssscc
+*/_i.c
+*/_p.c
+*.pidb
+*.bak
+*.cache
+*.log
+*.user
+*.dat
+*.dbmdl
+*.jfm
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
