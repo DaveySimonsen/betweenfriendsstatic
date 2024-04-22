@@ -18,11 +18,11 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #fcf5fb;
 }
 
 .page-content {
-    background-color: #f8f9fa; /* Light gray background */
     color: #343a40; /* Dark gray text color */
     overflow-y: auto; /* Enable vertical scrolling if needed */
     padding: 2em;
