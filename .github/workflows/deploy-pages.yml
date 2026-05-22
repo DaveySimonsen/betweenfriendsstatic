@@ -33,7 +33,7 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Path _site | Out-Null
-          Copy-Item index.html, site.css, title.png, CNAME -Destination _site
+          Copy-Item index.html, app.js, site.css, title.png, CNAME -Destination _site
 
       - name: Stamp build commit into HTML
         shell: pwsh
