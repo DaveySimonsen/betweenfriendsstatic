@@ -216,12 +216,32 @@
         return html`
             <main className="page-shell">
                 <section className="hero section-shell hero-shell">
+                    <h1 className="sr-only">Between Friends Podcast</h1>
+                    <div className="brand-lockup" aria-label="Between Friends Podcast">
+                        <span className="brand-spark brand-spark-a" aria-hidden="true">✦</span>
+                        <span className="brand-spark brand-spark-b" aria-hidden="true">✦</span>
+                        <span className="brand-spark brand-spark-c" aria-hidden="true">✦</span>
+                        <span className="brand-spark brand-spark-d" aria-hidden="true">✦</span>
+                        <span className="brand-spark brand-spark-e" aria-hidden="true">✦</span>
+                        <p className="brand-main">
+                            <span>Between</span>
+                            <span>Friends</span>
+                        </p>
+                        <p className="brand-script">Podcast</p>
+                    </div>
+                    <div className="hero-art">
+                        <figure className="hero-photo-frame">
+                            <img
+                                className="hero-photo"
+                                src="between-friends-season-3-cover-art-crop.jpg"
+                                alt="Chloe, Kennedy, Madison, and Sydney seated together for the Between Friends Podcast"
+                            />
+                        </figure>
+                    </div>
                     <div className="hero-copy">
-                        <p className="eyebrow">The Between Friends Podcast</p>
-                        <h1>Honest, funny conversations that feel close to home.</h1>
+                        <p className="hero-lead">Pull up a seat for the latest catch-up.</p>
                         <p className="hero-text">
-                            Join Chloe, Kennedy, Madison, and Sydney for stories, reflections, and the kind
-                            of catch-up that makes everyday life feel worth replaying.
+                            Meet Chloe, Kennedy, Madison, and Sydney for easy listens about friendship, life, and everything in between.
                         </p>
                         <div className="hero-actions">
                             <a className="button button-primary" href="https://open.spotify.com/show/2XxaYcqSgKaXIaerXjQ0Fs" target="_blank" rel="noreferrer">
@@ -231,21 +251,14 @@
                                 Open in Apple Podcasts
                             </a>
                         </div>
-                    </div>
-                    <div className="hero-art">
-                        <div className="hero-rail">
-                            <div className="title-frame">
-                                <img src="title.png" alt="Between Friends Podcast title art" />
-                            </div>
-                            <aside className="hero-sidecar" aria-label="Podcast highlights">
-                                <p className="platform-label">Why listen</p>
-                                <ul className="hero-notes">
-                                    ${heroNotes.map(function (note) {
-                                        return html`<li key=${note}>${note}</li>`;
-                                    })}
-                                </ul>
-                            </aside>
-                        </div>
+                        <aside className="hero-sidecar" aria-label="Podcast highlights">
+                            <p className="platform-label">Why listen</p>
+                            <ul className="hero-notes">
+                                ${heroNotes.map(function (note) {
+                                    return html`<li key=${note}>${note}</li>`;
+                                })}
+                            </ul>
+                        </aside>
                     </div>
                 </section>
 
