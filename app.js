@@ -88,6 +88,13 @@
                                 Open Instagram
                             </a>
                         </div>
+                        <div className="social-mobile-preview" aria-hidden="true">
+                            <img
+                                className="social-mobile-preview-image"
+                                src="instagram-preview.png"
+                                alt="Instagram preview for Between Friends Podcast"
+                            />
+                        </div>
                         <blockquote
                             className="instagram-media"
                             data-instgrm-permalink="https://www.instagram.com/between.friends.podcast/?utm_source=ig_embed&amp;utm_campaign=loading"
