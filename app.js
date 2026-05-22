@@ -170,7 +170,7 @@
     }
 
     function App() {
-        var initialOpen = sections.map(function (section) { return section.id; });
+        var initialOpen = [];
         var state = React.useState(initialOpen);
         var openSections = state[0];
         var setOpenSections = state[1];
@@ -202,15 +202,20 @@
                                 Open in Apple Podcasts
                             </a>
                         </div>
-                        <ul className="hero-notes" aria-label="Podcast highlights">
-                            ${heroNotes.map(function (note) {
-                                return html`<li key=${note}>${note}</li>`;
-                            })}
-                        </ul>
                     </div>
                     <div className="hero-art">
-                        <div className="title-frame">
-                            <img src="title.png" alt="Between Friends Podcast title art" />
+                        <div className="hero-rail">
+                            <div className="title-frame">
+                                <img src="title.png" alt="Between Friends Podcast title art" />
+                            </div>
+                            <aside className="hero-sidecar" aria-label="Podcast highlights">
+                                <p className="platform-label">Why listen</p>
+                                <ul className="hero-notes">
+                                    ${heroNotes.map(function (note) {
+                                        return html`<li key=${note}>${note}</li>`;
+                                    })}
+                                </ul>
+                            </aside>
                         </div>
                     </div>
                 </section>
