@@ -1,0 +1,55 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare site files
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path _site | Out-Null
+          Copy-Item index.html, site.css, title.png, CNAME -Destination _site
+
+      - name: Stamp build commit into HTML
+        shell: pwsh
+        run: |
+          $fullSha = "${{ github.sha }}"
+          $shortSha = $fullSha.Substring(0, 7)
+          $content = Get-Content _site/index.html -Raw
+          $content = $content.Replace("__BUILD_COMMIT__", $fullSha)
+          $content = $content.Replace("__BUILD_COMMIT_SHORT__", $shortSha)
+          Set-Content -Path _site/index.html -Value $content -NoNewline
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
