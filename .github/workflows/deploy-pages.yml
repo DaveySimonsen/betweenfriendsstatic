@@ -33,7 +33,18 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Path _site | Out-Null
-          Copy-Item index.html, app.js, site.css, title.png, CNAME -Destination _site
+          $siteFiles = @(
+            "index.html",
+            "app.js",
+            "site.css",
+            "title.png",
+            "favicon.ico",
+            "favicon-64.png",
+            "favicon.svg",
+            "instagram-preview.png",
+            "CNAME"
+          )
+          Copy-Item $siteFiles -Destination _site
 
       - name: Stamp build commit into HTML
         shell: pwsh
@@ -44,6 +55,11 @@ jobs:
           $content = $content.Replace("__BUILD_COMMIT__", $fullSha)
           $content = $content.Replace("__BUILD_COMMIT_SHORT__", $shortSha)
           Set-Content -Path _site/index.html -Value $content -NoNewline
+
+          $stampedContent = Get-Content _site/index.html -Raw
+          if ($stampedContent.Contains("__BUILD_COMMIT__") -or $stampedContent.Contains("__BUILD_COMMIT_SHORT__")) {
+            throw "Build commit placeholders were not fully replaced in _site/index.html"
+          }
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
