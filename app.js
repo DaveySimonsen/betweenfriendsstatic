@@ -122,9 +122,15 @@
             var fullTag = document.querySelector('meta[name="build-commit"]');
             var shortSha = shortTag ? shortTag.content : "";
             var fullSha = fullTag ? fullTag.content : "";
+            var isResolvedShortSha = shortSha && shortSha.indexOf("__BUILD") !== 0;
+            var isResolvedFullSha = fullSha && fullSha.indexOf("__BUILD") !== 0;
+            var hostname = window.location.hostname;
+            var isLocalHost = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "";
+
             return {
-                shortSha: shortSha.indexOf("__BUILD") === 0 ? "local" : shortSha,
-                fullSha: fullSha.indexOf("__BUILD") === 0 ? "local-preview" : fullSha
+                isVisible: Boolean(isResolvedShortSha && isResolvedFullSha) || isLocalHost,
+                shortSha: isResolvedShortSha ? shortSha : "local",
+                fullSha: isResolvedFullSha ? fullSha : "local-preview"
             };
         }, []);
     }
@@ -247,7 +253,9 @@
                         <a href="https://podcasts.apple.com/us/podcast/between-friends-podcast/id1734120490" target="_blank" rel="noreferrer">Apple Podcasts</a>
                         <a href="https://www.instagram.com/between.friends.podcast/" target="_blank" rel="noreferrer">Instagram</a>
                     </div>
-                    <p className="commit-pill" title=${commitInfo.fullSha}>Live build: ${commitInfo.shortSha}</p>
+                    ${commitInfo.isVisible && html`
+                        <p className="commit-pill" title=${commitInfo.fullSha}>Live build: ${commitInfo.shortSha}</p>
+                    `}
                 </footer>
             </main>
         `;
