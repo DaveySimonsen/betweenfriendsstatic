@@ -117,22 +117,38 @@
     ];
 
     function useCommitInfo() {
-        return React.useMemo(function () {
-            var shortTag = document.querySelector('meta[name="build-commit-short"]');
-            var fullTag = document.querySelector('meta[name="build-commit"]');
-            var shortSha = shortTag ? shortTag.content : "";
-            var fullSha = fullTag ? fullTag.content : "";
-            var isResolvedShortSha = shortSha && shortSha.indexOf("__BUILD") !== 0;
-            var isResolvedFullSha = fullSha && fullSha.indexOf("__BUILD") !== 0;
-            var hostname = window.location.hostname;
-            var isLocalHost = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "";
+        var hostname = window.location.hostname;
+        var isLocalHost = hostname === "localhost" || hostname === "127.0.0.1" || hostname === "";
+        var shortTag = document.querySelector('meta[name="build-commit-short"]');
+        var fullTag = document.querySelector('meta[name="build-commit"]');
+        var shortSha = shortTag ? shortTag.content : "";
+        var fullSha = fullTag ? fullTag.content : "";
+        var isTemplateValue = function (value) {
+            return !value || value.indexOf("__BUILD") === 0 || value.indexOf("{{") >= 0 || value.indexOf("{%") >= 0;
+        };
+        var isResolvedShortSha = !isTemplateValue(shortSha);
+        var isResolvedFullSha = !isTemplateValue(fullSha);
+        var initialInfo = isResolvedShortSha && isResolvedFullSha
+            ? {
+                isVisible: true,
+                shortSha: shortSha,
+                fullSha: fullSha
+            }
+            : isLocalHost
+                ? {
+                    isVisible: true,
+                    shortSha: "local",
+                    fullSha: "local-preview"
+                }
+                : {
+                    isVisible: false,
+                    shortSha: "",
+                    fullSha: ""
+                };
+        var state = React.useState(initialInfo);
+        var commitInfo = state[0];
 
-            return {
-                isVisible: Boolean(isResolvedShortSha && isResolvedFullSha) || isLocalHost,
-                shortSha: isResolvedShortSha ? shortSha : "local",
-                fullSha: isResolvedFullSha ? fullSha : "local-preview"
-            };
-        }, []);
+        return commitInfo;
     }
 
     function AccordionSection(props) {
