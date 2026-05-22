@@ -35,3 +35,11 @@
 *.user
 *.userosscache
 *.sln.docstates
+
+# Local browser preview artifacts
+.chrome-headless-test/
+.chrome-shot/
+.edge-headless/
+screen-test.png
+homepage-preview.png
+shot.png
