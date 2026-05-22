@@ -18,12 +18,15 @@
             renderContent: function () {
                 return html`
                     <div className="intro-grid">
-                        <div>
-                            <p>
-                                Between Friends blends heart, humor, and personality. It is casual enough to feel
-                                welcoming and thoughtful enough to keep people listening once they press play.
-                            </p>
-                        </div>
+                        <p>
+                            Between Friends blends heart, humor, and personality. It is casual enough to feel
+                            welcoming and thoughtful enough to keep people listening once they press play.
+                        </p>
+                        <ul className="intro-points" aria-label="Podcast vibe highlights">
+                            <li>Warm and conversational</li>
+                            <li>Easy humor without trying too hard</li>
+                            <li>Thoughtful enough to stick with you</li>
+                        </ul>
                     </div>
                 `;
             }
@@ -151,126 +154,147 @@
         return commitInfo;
     }
 
-    function AccordionSection(props) {
+    function SectionCard(props) {
         var section = props.section;
-        var isOpen = props.isOpen;
-        var toggle = props.toggle;
-        var contentId = section.id + "-panel";
-        var headerId = section.id + "-header";
 
         React.useEffect(function () {
-            if (section.id === "social" && isOpen && window.instgrm && window.instgrm.Embeds) {
+            if (section.id === "social" && window.instgrm && window.instgrm.Embeds) {
                 window.instgrm.Embeds.process();
             }
-        }, [isOpen, section.id]);
+        }, [section.id]);
 
         return html`
-            <section className=${"section-shell " + (isOpen ? "section-open" : "")}>
-                <button
-                    id=${headerId}
-                    className="section-toggle"
-                    type="button"
-                    aria-expanded=${isOpen}
-                    aria-controls=${contentId}
-                    onClick=${function () { toggle(section.id); }}
-                >
-                    <div className="section-toggle-copy">
-                        <p className="section-kicker">${section.kicker}</p>
-                        ${isOpen && html`
-                            <h2>${section.title}</h2>
-                            <p className="section-summary">${section.description}</p>
-                        `}
-                    </div>
-                    <span className="section-indicator" aria-hidden="true"></span>
-                </button>
-                <div
-                    id=${contentId}
-                    className=${"section-panel " + (isOpen ? "section-panel-open" : "")}
-                    role="region"
-                    aria-labelledby=${headerId}
-                    hidden=${!isOpen}
-                >
+            <article className="section-shell section-open stack-card" data-stack-card="true" data-stack-state=${props.stackState}>
+                <div className="section-static-header">
+                    <p className="section-kicker">${section.kicker}</p>
+                    <h2>${section.title}</h2>
+                    <p className="section-summary">${section.description}</p>
+                </div>
+                <div className="section-panel section-panel-open">
                     <div className="section-panel-inner">
                         ${section.renderContent()}
                     </div>
                 </div>
-            </section>
+            </article>
         `;
     }
 
     function App() {
-        var initialOpen = [];
-        var state = React.useState(initialOpen);
-        var openSections = state[0];
-        var setOpenSections = state[1];
         var commitInfo = useCommitInfo();
+        var activeState = React.useState(0);
+        var activeStackIndex = activeState[0];
+        var setActiveStackIndex = activeState[1];
 
-        var toggleSection = React.useCallback(function (sectionId) {
-            setOpenSections(function (current) {
-                return current.indexOf(sectionId) >= 0
-                    ? current.filter(function (id) { return id !== sectionId; })
-                    : current.concat(sectionId);
-            });
+        React.useEffect(function () {
+            var scheduled = false;
+
+            var updateStack = function () {
+                scheduled = false;
+                var stages = Array.from(document.querySelectorAll("[data-stack-stage]"));
+                var viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+                var activationLine = Math.min(Math.max(viewportHeight * 0.42, 320), 520);
+                var activeIndex = 0;
+
+                stages.forEach(function (stage, index) {
+                    var rect = stage.getBoundingClientRect();
+                    if (rect.top <= activationLine) {
+                        activeIndex = index;
+                    }
+                });
+
+                setActiveStackIndex(function (current) {
+                    return current === activeIndex ? current : activeIndex;
+                });
+            };
+
+            var requestUpdate = function () {
+                if (!scheduled) {
+                    scheduled = true;
+                    window.requestAnimationFrame(updateStack);
+                }
+            };
+
+            updateStack();
+            window.addEventListener("scroll", requestUpdate, { passive: true });
+            window.addEventListener("resize", requestUpdate);
+
+            return function () {
+                window.removeEventListener("scroll", requestUpdate);
+                window.removeEventListener("resize", requestUpdate);
+            };
         }, []);
 
         return html`
             <main className="page-shell">
-                <section className="hero section-shell hero-shell">
-                    <h1 className="sr-only">Between Friends Podcast</h1>
-                    <div className="brand-lockup" aria-label="Between Friends Podcast">
-                        <span className="brand-spark brand-spark-a" aria-hidden="true">✦</span>
-                        <span className="brand-spark brand-spark-b" aria-hidden="true">✦</span>
-                        <span className="brand-spark brand-spark-c" aria-hidden="true">✦</span>
-                        <span className="brand-spark brand-spark-d" aria-hidden="true">✦</span>
-                        <span className="brand-spark brand-spark-e" aria-hidden="true">✦</span>
-                        <p className="brand-main">
-                            <span>Between</span>
-                            <span>Friends</span>
-                        </p>
-                        <p className="brand-script">Podcast</p>
-                    </div>
-                    <div className="hero-art">
-                        <figure className="hero-photo-frame">
-                            <img
-                                className="hero-photo"
-                                src="between-friends-season-3-cover-art-crop.jpg"
-                                alt="Chloe, Kennedy, Madison, and Sydney seated together for the Between Friends Podcast"
-                            />
-                        </figure>
-                    </div>
-                    <div className="hero-copy">
-                        <p className="hero-lead">Pull up a seat for the latest catch-up.</p>
-                        <p className="hero-text">
-                            Meet Chloe, Kennedy, Madison, and Sydney for easy listens about friendship, life, and everything in between.
-                        </p>
-                        <div className="hero-actions">
-                            <a className="button button-primary" href="https://open.spotify.com/show/2XxaYcqSgKaXIaerXjQ0Fs" target="_blank" rel="noreferrer">
-                                Play on Spotify
-                            </a>
-                            <a className="button button-secondary" href="https://podcasts.apple.com/us/podcast/between-friends-podcast/id1734120490" target="_blank" rel="noreferrer">
-                                Open in Apple Podcasts
-                            </a>
-                        </div>
-                        <aside className="hero-sidecar" aria-label="Podcast highlights">
-                            <p className="platform-label">Why listen</p>
-                            <ul className="hero-notes">
-                                ${heroNotes.map(function (note) {
-                                    return html`<li key=${note}>${note}</li>`;
-                                })}
-                            </ul>
-                        </aside>
-                    </div>
-                </section>
-
                 <div className="section-stack">
-                    ${sections.map(function (section) {
+                    <div className="stack-stage" data-stack-stage="true" data-stack-state=${activeStackIndex === 0 ? "current" : "past"} style=${{ "--stack-index": 0 }}>
+                        <section
+                            className="hero section-shell hero-shell stack-card"
+                            data-stack-card="true"
+                            data-stack-state=${activeStackIndex === 0 ? "current" : "past"}
+                        >
+                            <h1 className="sr-only">Between Friends Podcast</h1>
+                            <div className="brand-lockup" aria-label="Between Friends Podcast">
+                                <span className="brand-spark brand-spark-a" aria-hidden="true">✦</span>
+                                <span className="brand-spark brand-spark-b" aria-hidden="true">✦</span>
+                                <span className="brand-spark brand-spark-c" aria-hidden="true">✦</span>
+                                <span className="brand-spark brand-spark-d" aria-hidden="true">✦</span>
+                                <span className="brand-spark brand-spark-e" aria-hidden="true">✦</span>
+                                <p className="brand-main">
+                                    <span>Between</span>
+                                    <span>Friends</span>
+                                </p>
+                                <p className="brand-script">Podcast</p>
+                            </div>
+                            <div className="hero-art">
+                                <figure className="hero-photo-frame">
+                                    <img
+                                        className="hero-photo"
+                                        src="between-friends-season-3-cover-art-crop.jpg"
+                                        alt="Chloe, Kennedy, Madison, and Sydney seated together for the Between Friends Podcast"
+                                    />
+                                </figure>
+                            </div>
+                            <div className="hero-copy">
+                                <p className="hero-lead">Pull up a seat for the latest catch-up.</p>
+                                <p className="hero-text">
+                                    Meet Chloe, Kennedy, Madison, and Sydney for easy listens about friendship, life, and everything in between.
+                                </p>
+                                <div className="hero-actions">
+                                    <a className="button button-primary" href="https://open.spotify.com/show/2XxaYcqSgKaXIaerXjQ0Fs" target="_blank" rel="noreferrer">
+                                        Play on Spotify
+                                    </a>
+                                    <a className="button button-secondary" href="https://podcasts.apple.com/us/podcast/between-friends-podcast/id1734120490" target="_blank" rel="noreferrer">
+                                        Open in Apple Podcasts
+                                    </a>
+                                </div>
+                                <aside className="hero-sidecar" aria-label="Podcast highlights">
+                                    <p className="platform-label">Why listen</p>
+                                    <ul className="hero-notes">
+                                        ${heroNotes.map(function (note) {
+                                            return html`<li key=${note}>${note}</li>`;
+                                        })}
+                                    </ul>
+                                </aside>
+                            </div>
+                        </section>
+                    </div>
+
+                    ${sections.map(function (section, index) {
                         return html`
-                            <${AccordionSection}
+                            <div
+                                className="stack-stage"
+                                data-stack-stage="true"
+                                data-stack-state=${index + 1 < activeStackIndex ? "past" : index + 1 === activeStackIndex ? "current" : "upcoming"}
+                                style=${{ "--stack-index": index + 1 }}
                                 key=${section.id}
-                                section=${section}
-                                isOpen=${openSections.indexOf(section.id) >= 0}
-                                toggle=${toggleSection}
-                            />
+                            >
+                                <${SectionCard}
+                                    section=${section}
+                                    stackIndex=${index + 1}
+                                    stackState=${index + 1 < activeStackIndex ? "past" : index + 1 === activeStackIndex ? "current" : "upcoming"}
+                                />
+                            </div>
                         `;
                     })}
                 </div>
